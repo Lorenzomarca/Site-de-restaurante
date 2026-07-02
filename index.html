@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gourmet Express | Sistema de Pedidos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="loader" class="loader-container">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <header class="main-header">
+        <div class="header-container container">
+            <div class="logo-area" id="btn-logo-home">
+                <i class="fa-solid fa-utensils logo-icon"></i>
+                <h1>Gourmet<span>Express</span></h1>
+            </div>
+            
+            <div class="header-actions">
+                <button id="theme-toggle" class="icon-btn" title="Alternar Modo">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+                <button id="btn-admin-panel" class="nav-admin-btn">
+                    <i class="fa-solid fa-lock"></i> Painel Admin
+                </button>
+                <button id="cart-toggle" class="cart-btn">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <span id="cart-count" class="cart-badge">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-layout">
+        
+        <section id="customer-screen" class="view-section active">
+            <div class="promo-banner">
+                <div class="promo-content">
+                    <span class="badge">PROMOÇÃO DO DIA</span>
+                    <h2>Sabor Inigualável com 10% OFF!</h2>
+                    <p>Use o cupom <span class="coupon-code">GOURMET10</span> no seu primeiro pedido.</p>
+                </div>
+                <div class="promo-img">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=500&q=80" alt="Promoção">
+                </div>
+            </div>
+
+            <div class="search-filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="search-input" placeholder="O que você deseja saborear hoje?">
+                </div>
+                <div class="filter-tabs">
+                    <button class="tab-btn active" data-category="todos">Todos</button>
+                    <button class="tab-btn" data-category="Entradas">Entradas</button>
+                    <button class="tab-btn" data-category="Hambúrgueres">Burgers</button>
+                    <button class="tab-btn" data-category="Pizzas">Pizzas</button>
+                    <button class="tab-btn" data-category="Massas">Massas</button>
+                    <button class="tab-btn" data-category="Carnes">Carnes</button>
+                    <button class="tab-btn" data-category="Bebidas">Bebidas</button>
+                    <button class="tab-btn" data-category="Sobremesas">Doces</button>
+                    <button class="tab-btn" data-category="favoritos"><i class="fa-solid fa-heart text-red"></i> Favoritos</button>
+                </div>
+            </div>
+
+            <div class="products-section">
+                <h2 class="section-title" id="current-category-title">Cardápio Completo</h2>
+                <div class="products-grid" id="products-grid">
+                    </div>
+            </div>
+        </section>
+
+        <section id="admin-screen" class="view-section">
+            <div class="admin-header">
+                <h2><i class="fa-solid fa-gears"></i> Gerenciamento do Cardápio</h2>
+                <button id="btn-back-to-menu" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Voltar ao Menu</button>
+            </div>
+
+            <div class="admin-grid">
+                <div class="admin-card form-card">
+                    <h3 id="form-title">Adicionar Novo Produto</h3>
+                    <form id="product-form">
+                        <input type="hidden" id="prod-id">
+                        <div class="form-group">
+                            <label for="prod-name">Nome do Produto</label>
+                            <input type="text" id="prod-name" required placeholder="Ex: Burger Triplo Smash">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="prod-category">Categoria</label>
+                                <select id="prod-category" required>
+                                    <option value="Entradas">Entradas</option>
+                                    <option value="Hambúrgueres">Hambúrgueres</option>
+                                    <option value="Pizzas">Pizzas</option>
+                                    <option value="Massas">Massas</option>
+                                    <option value="Carnes">Carnes</option>
+                                    <option value="Bebidas">Bebidas</option>
+                                    <option value="Sobremesas">Sobremesas</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="prod-price">Preço (R$)</label>
+                                <input type="number" id="prod-price" step="0.01" min="0" required placeholder="29.90">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-image">URL da Imagem</label>
+                            <input type="url" id="prod-image" placeholder="https://images.unsplash.com/..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-desc">Descrição</label>
+                            <textarea id="prod-desc" rows="3" required placeholder="Detalhes dos ingredientes..."></textarea>
+                        </div>
+                        <div class="form-row alignment-row">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="prod-available" checked>
+                                <label for="prod-available">Item Disponível em Estoque</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="prod-featured">
+                                <label for="prod-featured">Destaque / Mais Vendido</label>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="btn-cancel-edit" class="btn btn-secondary hidden">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Salvar Produto</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="admin-card list-card">
+                    <h3>Itens Cadastrados</h3>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Imagem</th>
+                                    <th>Produto</th>
+                                    <th>Categoria</th>
+                                    <th>Preço</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-products-table">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-sidebar-header">
+            <h3><i class="fa-solid fa-basket-shopping"></i> Seu Carrinho</h3>
+            <button id="cart-close" class="close-btn">&times;</button>
+        </div>
+        
+        <div class="cart-items-container" id="cart-items-container">
+            </div>
+
+        <div class="cart-summary-footer">
+            <div class="coupon-section">
+                <input type="text" id="coupon-input" placeholder="Cupom de Desconto">
+                <button id="btn-apply-coupon">Aplicar</button>
+            </div>
+            <div id="coupon-feedback" class="coupon-feedback"></div>
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="summary-subtotal">R$ 0,00</span>
+            </div>
+            <div class="summary-row">
+                <span>Taxa de Entrega</span>
+                <span id="summary-delivery">R$ 7,00</span>
+            </div>
+            <div class="summary-row discount-row hidden" id="summary-discount-container">
+                <span>Desconto</span>
+                <span id="summary-discount">-R$ 0,00</span>
+            </div>
+            <div class="summary-row total-row">
+                <span>Total</span>
+                <span id="summary-total">R$ 7,00</span>
+            </div>
+
+            <div class="cart-action-buttons">
+                <button id="btn-clear-cart" class="btn btn-danger-outline"><i class="fa-solid fa-trash-can"></i> Limpar</button>
+                <button id="btn-go-to-checkout" class="btn btn-primary flex-1">Finalizar Pedido <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+    <div id="cart-overlay" class="cart-overlay"></div>
+
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-truck-ramp-box"></i> Dados de Entrega & Pagamento</h2>
+                <button class="modal-close" id="close-checkout-modal">&times;</button>
+            </div>
+            <form id="checkout-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cust-name">Nome Completo *</label>
+                        <input type="text" id="cust-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cust-phone">Telefone / WhatsApp *</label>
+                        <input type="tel" id="cust-phone" placeholder="(11) 99999-9999" required>
+                    </div>
+                </div>
+                <div class="form-row-3">
+                    <div class="form-group flex-2">
+                        <label for="cust-address">Endereço (Rua/Av) *</label>
+                        <input type="text" id="cust-address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cust-number">Número *</label>
+                        <input type="text" id="cust-number" required>
+                    </div>
+                </div>
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label for="cust-complement">Complemento</label>
+                        <input type="text" id="cust-complement">
+                    </div>
+                    <div class="form-group">
+                        <label for="cust-neighborhood">Bairro *</label>
+                        <input type="text" id="cust-neighborhood" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cust-city">Cidade *</label>
+                        <input type="text" id="cust-city" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cust-payment">Forma de Pagamento *</label>
+                    <select id="cust-payment" required>
+                        <option value="">Selecione uma opção...</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="PIX">PIX</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Cartão de Débito">Cartão de Débito</option>
+                    </select>
+                </div>
+
+                <div id="cash-change-container" class="form-group hidden animate-fade">
+                    <label for="cust-change">Precisa de troco para quanto?</label>
+                    <input type="number" id="cust-change" step="0.01" placeholder="Ex: 50.00">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg mt-1">Confirmar e Enviar Pedido</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="success-modal" class="modal">
+        <div class="modal-content text-center success-card animate-scale">
+            <div class="success-icon-wrapper">
+                <i class="fa-solid fa-circle-check check-animated"></i>
+            </div>
+            <h2>Pedido Confirmado com Sucesso!</h2>
+            <p class="subtitle">Seu pedido já foi enviado para a nossa cozinha.</p>
+            <hr class="divider">
+            
+            <div id="order-summary-box" class="order-summary-box">
+                </div>
+
+            <button id="btn-close-success" class="btn btn-primary mt-2">Excelente!</button>
+        </div>
+    </div>
+
+    <button id="back-to-top" class="back-to-top-btn" title="Voltar ao topo">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>

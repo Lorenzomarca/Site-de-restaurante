@@ -10,7 +10,7 @@ const DEFAULT_PRODUCTS = [
     { id: 8, name: "Pizza Marguerita Clássica", category: "Pizzas", price: 42.00, desc: "Muçarela de búfala, rodelas de tomate fresco, manjericão orgânico e azeite extravirgem.", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=500&q=80", rating: 4, available: true, featured: false },
     { id: 9, name: "Coca-Cola Lata", category: "Bebidas", price: 6.50, desc: "Lata 350ml trincando de gelada.", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=500&q=80", rating: 5, available: true, featured: false },
     { id: 10, name: "Suco de Laranja Natural", category: "Bebidas", price: 9.00, desc: "Suco natural feito na hora da fruta pura, sem adição de conservantes. 400ml.", image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=500&q=80", rating: 4, available: true, featured: false },
-    { id: 11, name: "Pudim de Leite Condensado", category: "Sobremesas", price: 12.00, desc: "Textura super cremosa, sem furinhos, com calda de caramelo perfeita da vovó.", image: "https://images.unsplash.com/photo-1528975604071-b4daaf306d88?auto=format&fit=crop&w=500&q=80", rating: 5, available: true, featured: true },
+    { id: 11, name: "Pudim de Leite Condensado", category: "Sobremesas", price: 12.00, desc: "Textura super cremosa, sem furinhos, com calda de caramelo perfeita da vovó.", image: "https://images.unsplash.com/photo-1633514197679-22488a7b3a95?auto=format&fit=crop&w=500&q=80", rating: 5, available: true, featured: true },
     { id: 12, name: "Brownie Splendor com Sorvete", category: "Sobremesas", price: 18.90, desc: "Brownie quentinho de chocolate nobre com nozes, acompanhado de uma bola de sorvete de creme.", image: "https://images.unsplash.com/photo-1564355808539-22fda35bed7e?auto=format&fit=crop&w=500&q=80", rating: 5, available: true, featured: true }
 ];
 
@@ -30,7 +30,6 @@ const VALID_COUPONS = {
 
 // ================= INICIALIZADOR =================
 document.addEventListener("DOMContentLoaded", () => {
-    // Sincroniza LocalStorage inicial caso esteja vazio
     if(!localStorage.getItem('restaurant_products')) {
         localStorage.setItem('restaurant_products', JSON.stringify(products));
     }
@@ -38,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initDOMEvents();
     renderApp();
     
-    // Simular Loader comercial ativo por 800ms
     setTimeout(() => {
         const loader = document.getElementById('loader');
         if(loader) {
@@ -55,13 +53,11 @@ function renderApp() {
     renderAdminTable();
 }
 
-// Renderiza a Vitrine de Produtos do Cliente
 function renderProductsGrid() {
     const grid = document.getElementById('products-grid');
     if (!grid) return;
     grid.innerHTML = '';
 
-    // Regras de Filtros Aplicados encadeados
     let filtered = products.filter(p => {
         const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             p.desc.toLowerCase().includes(searchQuery.toLowerCase());
@@ -110,7 +106,6 @@ function renderProductsGrid() {
     });
 }
 
-// Renderiza a Sidebar Lateral do Carrinho
 function renderCart() {
     const container = document.getElementById('cart-items-container');
     const countBadge = document.getElementById('cart-count');
@@ -158,7 +153,6 @@ function renderCart() {
 
     countBadge.innerText = totalItemsCount;
 
-    // Cálculos Financeiros
     let discountAmount = 0;
     if (activeCoupon) {
         discountAmount = subtotal * activeCoupon.value;
@@ -178,7 +172,6 @@ function renderCart() {
     }
 }
 
-// Renderiza a Tabela Administrativa (Simulada)
 function renderAdminTable() {
     const tbody = document.getElementById('admin-products-table');
     if (!tbody) return;
@@ -208,8 +201,6 @@ function renderAdminTable() {
 }
 
 // ================= LOGICA DE NEGOCIO / EVENTOS COMPORTAMENTO =================
-
-// Adicionar item ao carrinho
 window.addToCart = function(id) {
     const prod = products.find(p => p.id === id);
     if(!prod || !prod.available) return;
@@ -226,7 +217,6 @@ window.addToCart = function(id) {
     showToast(`${prod.name} inserido no carrinho!`);
 };
 
-// Alterar quantidade interna do carrinho
 window.updateQty = function(id, delta) {
     const item = cart.find(i => i.id === id);
     if(!item) return;
@@ -239,7 +229,6 @@ window.updateQty = function(id, delta) {
     renderCart();
 };
 
-// Remover completamente do carrinho
 window.removeFromCart = function(id) {
     cart = cart.filter(i => i.id !== id);
     saveCartState();
@@ -247,7 +236,6 @@ window.removeFromCart = function(id) {
     showToast("Item removido do carrinho.");
 };
 
-// Alternar Favoritos
 window.toggleFavorite = function(id, event) {
     event.stopPropagation();
     const idx = favorites.indexOf(id);
@@ -266,19 +254,16 @@ function saveCartState() {
     localStorage.setItem('restaurant_cart', JSON.stringify(cart));
 }
 
-// ================= CRUD PRODUTOS ADMINISTRATIVO =================
 function saveProductsState() {
     localStorage.setItem('restaurant_products', JSON.stringify(products));
 }
 
-// Excluir Produto
 window.deleteProduct = function(id) {
     const prod = products.find(p => p.id === id);
     if(!prod) return;
 
     if(confirm(`Tem certeza absoluta que deseja excluir o produto "${prod.name}"?`)) {
         products = products.filter(p => p.id !== id);
-        // Remove do carrinho se houver
         cart = cart.filter(i => i.id !== id);
         saveProductsState();
         saveCartState();
@@ -287,7 +272,6 @@ window.deleteProduct = function(id) {
     }
 };
 
-// Carregar Dados para Edição
 window.editProduct = function(id) {
     const p = products.find(prod => prod.id === id);
     if(!p) return;
@@ -304,13 +288,11 @@ window.editProduct = function(id) {
     document.getElementById('form-title').innerText = "Editar Produto";
     document.getElementById('btn-cancel-edit').classList.remove('hidden');
     
-    // Rola suave até o formulário admin para feedback visual claro
     document.getElementById('product-form').scrollIntoView({ behavior: 'smooth' });
 };
 
 // ================= EVENTOS DO ELEMENTOS DOM =================
 function initDOMEvents() {
-    // Menu e Layout Toggle
     const cartSidebar = document.getElementById('cart-sidebar');
     const cartOverlay = document.getElementById('cart-overlay');
     
@@ -326,7 +308,6 @@ function initDOMEvents() {
     document.getElementById('cart-close').addEventListener('click', closeCart);
     cartOverlay.addEventListener('click', closeCart);
 
-    // Navegação Telas (SPA)
     const clientView = document.getElementById('customer-screen');
     const adminView = document.getElementById('admin-screen');
 
@@ -344,7 +325,6 @@ function initDOMEvents() {
     document.getElementById('btn-back-to-menu').addEventListener('click', backToMenu);
     document.getElementById('btn-logo-home').addEventListener('click', backToMenu);
 
-    // Gerenciador Temas (Light/Dark Mode)
     const themeBtn = document.getElementById('theme-toggle');
     themeBtn.addEventListener('click', () => {
         const html = document.documentElement;
@@ -359,13 +339,11 @@ function initDOMEvents() {
         }
     });
 
-    // Busca Real-time
     document.getElementById('search-input').addEventListener('input', (e) => {
         searchQuery = e.target.value;
         renderProductsGrid();
     });
 
-    // Abas de Categorias Filtros
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -378,7 +356,6 @@ function initDOMEvents() {
         });
     });
 
-    // Limpar Carrinho
     document.getElementById('btn-clear-cart').addEventListener('click', () => {
         if(cart.length === 0) return;
         if(confirm("Deseja realmente esvaziar o carrinho?")) {
@@ -389,7 +366,6 @@ function initDOMEvents() {
         }
     });
 
-    // Cupons de desconto
     document.getElementById('btn-apply-coupon').addEventListener('click', () => {
         const code = document.getElementById('coupon-input').value.trim().toUpperCase();
         const feedback = document.getElementById('coupon-feedback');
@@ -405,7 +381,6 @@ function initDOMEvents() {
         }
     });
 
-    // Gerenciamento e Submissão do Formulário Admin
     const prodForm = document.getElementById('product-form');
     prodForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -419,14 +394,12 @@ function initDOMEvents() {
         const featured = document.getElementById('prod-featured').checked;
 
         if(idVal) {
-            // Modo Edição
             const idx = products.findIndex(p => p.id === parseInt(idVal));
             if(idx > -1) {
                 products[idx] = { ...products[idx], name, category, price, image, desc, available, featured };
-                showToast("Produto atualizado com sucesso!");
+                showToast("Produto updated com sucesso!");
             }
         } else {
-            // Modo Criação Novo
             const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
             products.push({ id: newId, name, category, price, image, desc, rating: 5, available, featured });
             showToast("Novo produto adicionado ao cardápio!");
@@ -446,7 +419,6 @@ function initDOMEvents() {
     };
     cancelEditBtn.addEventListener('click', resetAdminForm);
 
-    // Sistema de Abertura/Fechamento Modais do Checkout
     const checkoutModal = document.getElementById('checkout-modal');
     document.getElementById('btn-go-to-checkout').addEventListener('click', () => {
         if(cart.length === 0) {
@@ -461,7 +433,6 @@ function initDOMEvents() {
         checkoutModal.classList.remove('open');
     });
 
-    // Toggle condicional campo troco em dinheiro
     document.getElementById('cust-payment').addEventListener('change', (e) => {
         const changeContainer = document.getElementById('cash-change-container');
         if(e.target.value === 'Dinheiro') {
@@ -471,11 +442,9 @@ function initDOMEvents() {
         }
     });
 
-    // Submissão do Checkout Final
     document.getElementById('checkout-form').addEventListener('submit', (e) => {
         e.preventDefault();
         
-        // Coleta de dados
         const name = document.getElementById('cust-name').value;
         const phone = document.getElementById('cust-phone').value;
         const address = document.getElementById('cust-address').value;
@@ -486,7 +455,6 @@ function initDOMEvents() {
         const payment = document.getElementById('cust-payment').value;
         const change = document.getElementById('cust-change').value;
 
-        // Cálculo de Valores Finais para Resumo
         let subtotal = cart.reduce((acc, item) => {
             const p = products.find(prod => prod.id === item.id);
             return acc + (p ? p.price * item.qty : 0);
@@ -494,7 +462,6 @@ function initDOMEvents() {
         let discount = activeCoupon ? subtotal * activeCoupon.value : 0;
         let total = (subtotal + DELIVERY_FEE) - discount;
 
-        // Construir Bloco de Resumo Comercial do Pedido
         const summaryBox = document.getElementById('order-summary-box');
         const now = new Date();
         const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -518,17 +485,15 @@ function initDOMEvents() {
             </div>
         `;
 
-        // Reset geral após sucesso
         cart = [];
         activeCoupon = null;
         document.getElementById('coupon-input').value = '';
         document.getElementById('coupon-feedback').innerText = '';
         document.getElementById('checkout-form').reset();
-        document.getElementById('cash-change-container').add('hidden');
+        document.getElementById('cash-change-container').classList.add('hidden');
         saveCartState();
         renderCart();
 
-        // Alternar modais
         checkoutModal.classList.remove('open');
         document.getElementById('success-modal').classList.add('open');
     });
@@ -537,7 +502,6 @@ function initDOMEvents() {
         document.getElementById('success-modal').classList.remove('open');
     });
 
-    // Eventos do botão Voltar ao Topo
     const btt = document.getElementById('back-to-top');
     window.addEventListener('scroll', () => {
         if(window.scrollY > 400) {
@@ -551,7 +515,6 @@ function initDOMEvents() {
     });
 }
 
-// ================= COMPONENTE DE NOTIFICAÇÃO TOAST =================
 function showToast(message) {
     const container = document.getElementById('toast-container');
     if(!container) return;
@@ -562,7 +525,6 @@ function showToast(message) {
     
     container.appendChild(toast);
 
-    // Remove do DOM após 3s completarem
     setTimeout(() => {
         toast.style.animation = 'slideIn 0.3s reverse forwards ease';
         setTimeout(() => toast.remove(), 300);
